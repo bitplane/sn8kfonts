@@ -1,0 +1,29 @@
+name: release
+on:
+  push:
+    tags: ["v*"]
+permissions:
+  contents: write
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: sudo apt-get update && sudo apt-get install -y figlet
+      - run: make
+      # specimen of every font in the release notes, rendered by a bone-stock
+      # figlet — what an ecosystem user gets with no block-aware engine
+      - run: |
+          {
+            echo '```'
+            for f in dist/*.tlf; do
+              echo "$(basename "$f" .tlf):"
+              figlet -d dist -f "$(basename "$f" .tlf)" "sn8ks"
+              echo
+            done
+            echo '```'
+          } > notes.md
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*.tlf
+          body_path: notes.md

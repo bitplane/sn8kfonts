@@ -1,8 +1,8 @@
 # sn8kfonts
 
 Blocky FIGlet/TOIlet fonts drawn as plain-text grids, built at subpixel
-resolution; half-blocks (1×2 per cell) and Unicode sextants (2×3 per cell,
-U+1FB00 Symbols for Legacy Computing).
+resolution; half-blocks (1×2 per cell), Unicode sextants (2×3 per cell,
+U+1FB00 Symbols for Legacy Computing), and Unicode 16 octants (2×4 per cell).
 
 Made for TeleText fonts in my game, [sn8ks](https://sn8ks.bitplane.net).
 
@@ -23,6 +23,9 @@ The difference is this:
   the mosaic letterforms teletext page artists built from 2×3 graphics
   blocks, one cell at a time. Sextant encoding, subpixel kerning.
 - **sn8kblock** — the sn8ks title font. Half-block encoding, fixed advance.
+- **sn8k5050** — the Mullard SAA5050/Mode 7 character ROM reduced from its
+  authentic 5×10 bitmap to an editable 4×8 grid and encoded as two-by-two
+  Unicode 16 octants. Fixed two-column advance for double-height teletext.
 
 ## Format
 
@@ -43,9 +46,28 @@ still parse, for scratch work on a case-sensitive box.
 ```sh
 tools/watch.sh font/sn8kfax          # live-render everything while you edit
 python3 tools/render.py font/sn8kblock --encoding halfblock
+python3 tools/render.py font/sn8k5050 --encoding octant
 python3 tools/typeset.py font/sn8kfax "NEWS"   # subpixel typesetting
 make                                 # build every font into dist/*.tlf
 figlet -d dist -f sn8kfax "NEWS"
+```
+
+`tools/saa5050import.py` bootstraps `font/sn8k5050` from the preserved ROM
+rows. It never overwrites hand edits unless passed `--force`. Consumers that
+want to embed the edited 4×8 bitmaps can generate a reviewable Rust table:
+
+```sh
+python3 tools/exportrows.py font/sn8k5050 -o sn8k5050.rs
+```
+
+For the sibling `ttx42` checkout, the complete tweak loop is:
+
+```sh
+$EDITOR font/sn8k5050/0030_0.txt
+python3 tools/render.py font/sn8k5050/0030_0.txt --encoding octant
+make
+python3 tools/exportrows.py font/sn8k5050 -o ../ttx42/src/sn8k5050.rs
+cargo fmt --manifest-path ../ttx42/Cargo.toml
 ```
 
 `typeset.py` is the reference renderer: it composes glyph bitmaps at
@@ -61,7 +83,8 @@ Per-font export flags live in the `Makefile`. Releases are tagged: CI runs
 
 Your terminal needs sextant support for sn8kfax (vte/gnome-terminal, kitty,
 WezTerm, ghostty, recent alacritty all synthesize them; no special font
-needed). sn8kblock is plain half-blocks and renders anywhere.
+needed). `sn8k5050` additionally requires Unicode 16 octant support.
+sn8kblock is plain half-blocks and renders anywhere.
 
 ## License
 

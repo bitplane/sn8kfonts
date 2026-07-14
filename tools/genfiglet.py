@@ -22,7 +22,7 @@ see plain comments): "kern: auto|fixed", "gap: N" (subpixels of daylight
 auto-kern keeps between letters), "shade: gradient" (vertical shading hint),
 "linegap: N" (subpixel rows between stacked lines).
 
-Usage: genfiglet.py FONT_DIR [-o OUT.tlf] [--encoding sextant|halfblock]
+Usage: genfiglet.py FONT_DIR [-o OUT.tlf] [--encoding sextant|halfblock|octant]
                     [--gap N] [--space N] [--kern auto|fixed]
                     [--shade gradient] [--linegap N]
 """

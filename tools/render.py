@@ -7,7 +7,7 @@ subpixels per cell (U+1FB00), halfblock = 1x2 (space/upper/lower/full block).
 (Dots let you keep leading/trailing empty rows and columns explicit — pure
 whitespace gets eaten by editors and tools.)
 
-Usage: render.py FILE_OR_DIR [...] [--encoding sextant|halfblock]
+Usage: render.py FILE_OR_DIR [...] [--encoding sextant|halfblock|octant]
 """
 import sys
 from pathlib import Path
@@ -50,10 +50,27 @@ def halfblock(mask):
     return " ▀▄█"[mask]
 
 
+def octant(mask):
+    special = {
+        0x00: " ", 0x01: "\U0001CEA8", 0x02: "\U0001CEAB",
+        0x03: "\U0001FB82", 0x05: "▘", 0x0A: "▝", 0x0F: "▀",
+        0x14: "\U0001FBE6", 0x28: "\U0001FBE7", 0x3F: "\U0001FB85",
+        0x40: "\U0001CEA3", 0x50: "▖", 0x55: "▌", 0x5A: "▞",
+        0x5F: "▛", 0x80: "\U0001CEA0", 0xA0: "▗", 0xA5: "▚",
+        0xAA: "▐", 0xAF: "▜", 0xC0: "▂", 0xF0: "▄", 0xF5: "▙",
+        0xFA: "▟", 0xFC: "▆", 0xFF: "█",
+    }
+    if mask in special:
+        return special[mask]
+    skipped = sum(value < mask for value in special)
+    return chr(0x1CD00 + mask - skipped)
+
+
 # name -> (cell width, cell height, mask -> char); mask bit = 1 << (dy*cw + dx)
 ENCODINGS = {
     "sextant": (2, 3, sextant),
     "halfblock": (1, 2, halfblock),
+    "octant": (2, 4, octant),
 }
 
 

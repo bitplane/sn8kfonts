@@ -10,6 +10,9 @@ all: $(TLFS)
 # them to 14, so one gap row reproduces the original 13+2 line pitch
 dist/sn8kblock.tlf: FLAGS := --encoding halfblock --gap 2 --space 3 --kern fixed --shade gradient --linegap 1
 
+# Authentic SAA5050 glyphs reduced to 4×8 pixels: exactly 2×2 octant cells.
+dist/sn8k5050.tlf: FLAGS := --encoding octant --gap 0 --space 4 --kern fixed
+
 .SECONDEXPANSION:
 # the second wildcard catches dot-file glyphs like "..txt" (full stop)
 dist/%.tlf: $$(wildcard font/%/*.txt) $$(wildcard font/%/.*.txt) tools/genfiglet.py tools/render.py
@@ -19,4 +22,7 @@ dist/%.tlf: $$(wildcard font/%/*.txt) $$(wildcard font/%/.*.txt) tools/genfiglet
 clean:
 	rm -rf dist
 
-.PHONY: all clean
+test:
+	python3 -m unittest discover -s tests
+
+.PHONY: all clean test

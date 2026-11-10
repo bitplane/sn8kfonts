@@ -30,7 +30,8 @@ SOFTWARE.
 ## FIGlet Mini font
 
 `source/mini.flf`, the glyphs in `font/mini/` derived from it and the fonts
-built from them (`mini`, `sn8kfax.quadrant`, `future.ascii`) are
+built from them (`mini`, `smblock.ascii`, `sn8kfax.quadrant`,
+`future.ascii`) are
 from FIGlet (<https://www.figlet.org/>). Mini by Glenn Chappell, 4/93; the
 font's own header permits modification "as long as the modifier's name is
 placed on a comment line", which `font/mini/CREDITS` does.

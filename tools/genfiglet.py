@@ -22,13 +22,14 @@ see plain comments): "kern: auto|fixed", "gap: N" (subpixels of daylight
 auto-kern keeps between letters), "shade: gradient" (vertical shading hint),
 "linegap: N" (subpixel rows between stacked lines).
 
---caps draws a-z with the A-Z glyphs, for an all-capitals font.
+--caps draws a-z with the A-Z glyphs, for an all-capitals font. --rows N
+keeps only each glyph's first N rows, for a shorter font from the same grids.
 
 A CREDITS file in FONT_DIR replaces the WTFPL comment line with its lines.
 
 Usage: genfiglet.py FONT_DIR [-o OUT.tlf] [--encoding sextant|halfblock|octant|text]
                     [--gap N] [--space N] [--kern auto|fixed]
-                    [--shade gradient] [--linegap N] [--caps]
+                    [--shade gradient] [--linegap N] [--caps] [--rows N]
 """
 import sys
 from pathlib import Path
@@ -74,6 +75,7 @@ def main(argv):
     kern = flag(args, "--kern", "auto")
     shade = flag(args, "--shade", None)
     linegap = flag(args, "--linegap", 0, int)
+    keep = flag(args, "--rows", None, int)
     caps = "--caps" in args
     if caps:
         args.remove("--caps")
@@ -95,7 +97,7 @@ def main(argv):
             print(f"skipping {f.name}: name is not a char or codepoint", file=sys.stderr)
             continue
         rows, width = load_grid(f, (1, 1))
-        grids[cp] = [r + pad * gap for r in rows]
+        grids[cp] = [r + pad * gap for r in rows[:keep]]
     if caps:
         for cp in range(ord("a"), ord("z") + 1):
             if cp - 32 in grids:

@@ -33,10 +33,11 @@ variant serves terminals with nothing finer than quadrants, an `.ascii` one
 plain ASCII:
 
 - `sn8k5050.quadrant` — each letter above a blank row, by script.
-- `mini` — FIGlet's Mini by Glenn Chappell, top three rows, imported with
-  `tools/flfimport.py`. Built again as `sn8kfax.quadrant` and as
-  `future.ascii` (for TOIlet's box-drawn future, which sn8ks also uses; all
-  capitals, like future, via genfiglet's `--caps`). Its
+- `mini` — FIGlet's Mini by Glenn Chappell, all four rows (descenders sit
+  on the last), imported with `tools/flfimport.py`, plus hand-drawn pause
+  and fast-forward. Built again as `smblock.ascii` and `sn8kfax.quadrant`,
+  and, three rows and all capitals (genfiglet's `--rows 3 --caps`), as
+  `future.ascii` for TOIlet's box-drawn future, which sn8ks also uses. Its
   `CREDITS` file carries Mini's attribution into the built fonts, as Mini's
   licence asks.
 

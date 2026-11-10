@@ -3,8 +3,10 @@
 
 FONTS := $(notdir $(patsubst %/,%,$(wildcard font/*/)))
 TLFS := $(FONTS:%=dist/%.tlf)
+# Built from another font: see the mini rules below.
+VARIANTS := dist/sn8kfax.quadrant.tlf dist/future.ascii.tlf
 
-all: $(TLFS)
+all: $(TLFS) $(VARIANTS)
 
 # linegap 1, not 2: glyph grids are 13 subpixel rows, halfblock cells pad
 # them to 14, so one gap row reproduces the original 13+2 line pitch
@@ -17,9 +19,13 @@ dist/sn8k5050.tlf: FLAGS := --encoding octant --gap 0 --space 4 --kern fixed
 # by script. sn8ks uses it at the quadrant tier and below.
 dist/sn8k5050.quadrant.tlf: FLAGS := --encoding text --gap 0 --space 2 --kern fixed
 
-# sn8kfax for terminals without sextants: FIGlet's mini, top three rows
-# (tools/flfimport.py source/mini.flf font/sn8kfax.quadrant font/sn8kfax --rows 3).
-dist/sn8kfax.quadrant.tlf: FLAGS := --encoding text --gap 1 --space 2 --kern fixed
+# FIGlet's Mini, top three rows, in plain text
+# (tools/flfimport.py source/mini.flf font/mini --rows 3). It stands in for
+# the three-row fonts where their glyphs won't draw: sn8kfax from quadrant
+# down, and TOIlet's future (box drawing) in ASCII.
+dist/mini.tlf: FLAGS := --encoding text --gap 1 --space 2 --kern fixed
+$(VARIANTS): dist/mini.tlf
+	cp $< $@
 
 .SECONDEXPANSION:
 # the second wildcard catches dot-file glyphs like "..txt" (full stop)

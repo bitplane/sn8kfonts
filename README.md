@@ -27,13 +27,17 @@ The difference is this:
   authentic 5×10 bitmap to an editable 4×8 grid and encoded as two-by-two
   Unicode 16 octants. Fixed two-column advance for double-height teletext.
 
-Each has a plain-text `.quadrant` variant (`font/<name>.quadrant/`, built
-with the `text` encoding) for terminals with nothing finer than quadrants;
-sn8ks switches to it by itself at that tier and below. `sn8k5050.quadrant`
-is each letter above a blank row, by script.
-`sn8kfax.quadrant` is FIGlet's Mini by Glenn Chappell, top three rows, imported
-with `tools/flfimport.py`; its `CREDITS` file carries Mini's attribution into
-the built font, as Mini's licence asks.
+Plain-text variants, built with the `text` encoding, stand in where a
+terminal can't draw the blocks; sn8ks switches by itself. A `.quadrant`
+variant serves terminals with nothing finer than quadrants, an `.ascii` one
+plain ASCII:
+
+- `sn8k5050.quadrant` — each letter above a blank row, by script.
+- `mini` — FIGlet's Mini by Glenn Chappell, top three rows, imported with
+  `tools/flfimport.py`. Built again as `sn8kfax.quadrant` and as
+  `future.ascii` (for TOIlet's box-drawn future, which sn8ks also uses). Its
+  `CREDITS` file carries Mini's attribution into the built fonts, as Mini's
+  licence asks.
 
 ## Format
 
@@ -97,5 +101,5 @@ sn8kblock is plain half-blocks and renders anywhere.
 ## License
 
 You were going to what you wanted anyway, right? So it's WTFPL. Except
-`sn8kfax.quadrant` and `source/mini.flf`, which are FIGlet's (BSD-3-Clause; see
+`font/mini`, the fonts built from it and `source/mini.flf`, which are FIGlet's (BSD-3-Clause; see
 `THIRD_PARTY_LICENSES.md`).

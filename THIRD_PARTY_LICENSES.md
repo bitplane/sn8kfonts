@@ -29,10 +29,11 @@ SOFTWARE.
 
 ## FIGlet Mini font
 
-`source/mini.flf` and the glyphs in `font/sn8kfax.quadrant/` derived from it are
+`source/mini.flf`, the glyphs in `font/mini/` derived from it and the fonts
+built from them (`mini`, `sn8kfax.quadrant`, `future.ascii`) are
 from FIGlet (<https://www.figlet.org/>). Mini by Glenn Chappell, 4/93; the
 font's own header permits modification "as long as the modifier's name is
-placed on a comment line", which `font/sn8kfax.quadrant/CREDITS` does.
+placed on a comment line", which `font/mini/CREDITS` does.
 
 Copyright (c) 1991, 1993, 1994 Glenn Chappell and Ian Chai
 Copyright (c) 1996-2001 John Cowan

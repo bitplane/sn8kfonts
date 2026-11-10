@@ -2,11 +2,12 @@
 """Import glyphs from a FIGlet font as text-encoded glyph grids.
 
 Takes the first --rows rows of each glyph (hardblanks become spaces, blank
-columns either side trimmed) for every
-glyph LIKE_DIR has, so a plain-text variant covers what the block font draws.
-Existing files are kept unless --force: hand edits survive a re-import.
+columns either side trimmed): every glyph the source draws, or with --like
+only those LIKE_DIR has, named as it names them. Space is left to genfiglet's
+--space. Existing files are kept unless --force: hand edits survive a
+re-import.
 
-Usage: flfimport.py SOURCE.flf FONT_DIR LIKE_DIR [--rows N] [--force]
+Usage: flfimport.py SOURCE.flf FONT_DIR [--like LIKE_DIR] [--rows N] [--force]
 """
 import sys
 from pathlib import Path
@@ -58,24 +59,33 @@ def trim(rows):
     return [r[inked[0] : inked[-1] + 1] for r in rows]
 
 
+def file_name(cp):
+    ch = chr(cp)
+    return f"{cp:04X}_{ch if ch.isascii() and ch.isalnum() else 'glyph'}.txt"
+
+
 def main(argv):
     args = list(argv)
     rows = flag(args, "--rows", None, int)
+    like = flag(args, "--like", None, Path)
     force = "--force" in args
     if force:
         args.remove("--force")
-    if len(args) != 3:
+    if len(args) != 2:
         print(__doc__.strip(), file=sys.stderr)
         return 2
-    source, out, like = args
+    source, out = args
     glyphs = read_flf(source)
+    if like:
+        wanted = {glyph_codepoint(glyph_stem(f)): f.name for f in grid_files(like)}
+    else:
+        wanted = {cp: file_name(cp) for cp in glyphs if cp != 32}
     out = Path(out)
     out.mkdir(parents=True, exist_ok=True)
-    for f in grid_files(like):
-        cp = glyph_codepoint(glyph_stem(f))
-        target = out / f.name
+    for cp, name in sorted(wanted.items()):
+        target = out / name
         if cp not in glyphs:
-            print(f"{f.name}: not in {source}", file=sys.stderr)
+            print(f"{name}: not in {source}", file=sys.stderr)
             continue
         if target.exists() and not force:
             continue

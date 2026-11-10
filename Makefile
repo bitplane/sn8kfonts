@@ -23,9 +23,13 @@ dist/sn8k5050.quadrant.tlf: FLAGS := --encoding text --gap 0 --space 2 --kern fi
 # (tools/flfimport.py source/mini.flf font/mini --rows 3). It stands in for
 # the three-row fonts where their glyphs won't draw: sn8kfax from quadrant
 # down, and TOIlet's future (box drawing) in ASCII.
-dist/mini.tlf: FLAGS := --encoding text --gap 1 --space 2 --kern fixed
-$(VARIANTS): dist/mini.tlf
+MINI_FLAGS := --encoding text --gap 1 --space 2 --kern fixed
+dist/mini.tlf: FLAGS := $(MINI_FLAGS)
+dist/sn8kfax.quadrant.tlf: dist/mini.tlf
 	cp $< $@
+# future is all capitals.
+dist/future.ascii.tlf: dist/mini.tlf
+	python3 tools/genfiglet.py font/mini $(MINI_FLAGS) --caps -o $@
 
 .SECONDEXPANSION:
 # the second wildcard catches dot-file glyphs like "..txt" (full stop)

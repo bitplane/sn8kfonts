@@ -44,5 +44,18 @@ class TextEncodingTests(unittest.TestCase):
             self.assertNotIn("WTFPL", text)
 
 
+    def test_caps_draws_lower_case_with_the_capitals(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            font = Path(tmp) / "x"
+            font.mkdir()
+            (font / "0041_A.txt").write_text("/\\\n")
+            (font / "0061_a.txt").write_text("a\n")
+            out = Path(tmp) / "x.tlf"
+            main([str(font), "--encoding", "text", "--gap", "0", "--caps", "-o", str(out)])
+            lines = out.read_text().splitlines()
+            self.assertEqual(lines[lines.index("/\\@@") + 1 :].count("/\\@@"), 1)
+            self.assertNotIn("a@@", lines)
+
+
 if __name__ == "__main__":
     unittest.main()

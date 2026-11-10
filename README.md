@@ -35,7 +35,8 @@ plain ASCII:
 - `sn8k5050.quadrant` — each letter above a blank row, by script.
 - `mini` — FIGlet's Mini by Glenn Chappell, top three rows, imported with
   `tools/flfimport.py`. Built again as `sn8kfax.quadrant` and as
-  `future.ascii` (for TOIlet's box-drawn future, which sn8ks also uses). Its
+  `future.ascii` (for TOIlet's box-drawn future, which sn8ks also uses; all
+  capitals, like future, via genfiglet's `--caps`). Its
   `CREDITS` file carries Mini's attribution into the built fonts, as Mini's
   licence asks.
 

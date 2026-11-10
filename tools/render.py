@@ -4,10 +4,12 @@
 Format: space or "." = empty, anything else = ink. Rows are right-padded to
 the widest row, then padded to the encoding's cell size — sextant = 2x3
 subpixels per cell (U+1FB00), halfblock = 1x2 (space/upper/lower/full block).
+The text encoding is different: each character is a cell, drawn as written,
+and only space is empty — for plain-text variants of the block fonts.
 (Dots let you keep leading/trailing empty rows and columns explicit — pure
 whitespace gets eaten by editors and tools.)
 
-Usage: render.py FILE_OR_DIR [...] [--encoding sextant|halfblock|octant]
+Usage: render.py FILE_OR_DIR [...] [--encoding sextant|halfblock|octant|text]
 """
 import sys
 from pathlib import Path
@@ -71,7 +73,13 @@ ENCODINGS = {
     "sextant": (2, 3, sextant),
     "halfblock": (1, 2, halfblock),
     "octant": (2, 4, octant),
+    "text": (1, 1, None),
 }
+
+
+def empty(encoding):
+    """The character that pads a grid: a dot, except in text, where a dot is ink."""
+    return " " if encoding == "text" else "."
 
 
 def cell_size(encoding):
@@ -81,6 +89,8 @@ def cell_size(encoding):
 
 def render(rows, width, encoding="sextant"):
     cw, ch, char = ENCODINGS[encoding]
+    if char is None:
+        return "\n".join(rows)
     out = []
     for y in range(0, len(rows), ch):
         line = []

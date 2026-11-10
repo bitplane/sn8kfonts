@@ -13,9 +13,17 @@ dist/sn8kblock.tlf: FLAGS := --encoding halfblock --gap 2 --space 3 --kern fixed
 # Authentic SAA5050 glyphs reduced to 4×8 pixels: exactly 2×2 octant cells.
 dist/sn8k5050.tlf: FLAGS := --encoding octant --gap 0 --space 4 --kern fixed
 
+# sn8k5050 for terminals without octants: two plain characters by two rows,
+# by script. sn8ks uses it at the quadrant tier and below.
+dist/sn8k5050.quadrant.tlf: FLAGS := --encoding text --gap 0 --space 2 --kern fixed
+
+# sn8kfax for terminals without sextants: FIGlet's mini, top three rows
+# (tools/flfimport.py source/mini.flf font/sn8kfax.quadrant font/sn8kfax --rows 3).
+dist/sn8kfax.quadrant.tlf: FLAGS := --encoding text --gap 1 --space 2 --kern fixed
+
 .SECONDEXPANSION:
 # the second wildcard catches dot-file glyphs like "..txt" (full stop)
-dist/%.tlf: $$(wildcard font/%/*.txt) $$(wildcard font/%/.*.txt) tools/genfiglet.py tools/render.py
+dist/%.tlf: $$(wildcard font/%/*.txt) $$(wildcard font/%/.*.txt) $$(wildcard font/%/CREDITS) tools/genfiglet.py tools/render.py
 	@mkdir -p dist
 	python3 tools/genfiglet.py font/$* $(FLAGS) -o $@
 

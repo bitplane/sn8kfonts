@@ -27,6 +27,14 @@ The difference is this:
   authentic 5×10 bitmap to an editable 4×8 grid and encoded as two-by-two
   Unicode 16 octants. Fixed two-column advance for double-height teletext.
 
+Each has a plain-text `.quadrant` variant (`font/<name>.quadrant/`, built
+with the `text` encoding) for terminals with nothing finer than quadrants;
+sn8ks switches to it by itself at that tier and below. `sn8k5050.quadrant`
+is each letter above a blank row, by script.
+`sn8kfax.quadrant` is FIGlet's Mini by Glenn Chappell, top three rows, imported
+with `tools/flfimport.py`; its `CREDITS` file carries Mini's attribution into
+the built font, as Mini's licence asks.
+
 ## Format
 
 One glyph per `.txt` file: space or `.` = empty, anything else = ink.
@@ -88,4 +96,6 @@ sn8kblock is plain half-blocks and renders anywhere.
 
 ## License
 
-You were going to what you wanted anyway, right? So it's WTFPL.
+You were going to what you wanted anyway, right? So it's WTFPL. Except
+`sn8kfax.quadrant` and `source/mini.flf`, which are FIGlet's (BSD-3-Clause; see
+`THIRD_PARTY_LICENSES.md`).

@@ -22,17 +22,24 @@ see plain comments): "kern: auto|fixed", "gap: N" (subpixels of daylight
 auto-kern keeps between letters), "shade: gradient" (vertical shading hint),
 "linegap: N" (subpixel rows between stacked lines).
 
-Usage: genfiglet.py FONT_DIR [-o OUT.tlf] [--encoding sextant|halfblock|octant]
+A CREDITS file in FONT_DIR replaces the WTFPL comment line with its lines.
+
+Usage: genfiglet.py FONT_DIR [-o OUT.tlf] [--encoding sextant|halfblock|octant|text]
                     [--gap N] [--space N] [--kern auto|fixed]
                     [--shade gradient] [--linegap N]
 """
 import sys
 from pathlib import Path
 
-from render import ENCODINGS, glyph_stem, grid_files, load_grid, render
+from render import ENCODINGS, empty, glyph_stem, grid_files, load_grid, render
 
-HARDBLANK = "$"
 END = "@"
+
+
+def hardblank(glyphs):
+    """A hardblank the glyphs don't draw: "$" unless a text font has a "$"."""
+    used = {c for rows in glyphs for row in rows for c in row}
+    return next(c for c in "$~`^\x7f" if c not in used)
 
 
 def glyph_codepoint(stem):
@@ -72,6 +79,7 @@ def main(argv):
     name = font_dir.name
     out = out or Path(f"{name}.tlf")
     cw, ch, _ = ENCODINGS[encoding]
+    pad = empty(encoding)
 
     # Grids stay at subpixel resolution until the very end: bake the gap,
     # normalize heights, THEN encode — so cell padding never eats a metric.
@@ -82,9 +90,9 @@ def main(argv):
             print(f"skipping {f.name}: name is not a char or codepoint", file=sys.stderr)
             continue
         rows, width = load_grid(f, (1, 1))
-        grids[cp] = [r + "." * gap for r in rows]
+        grids[cp] = [r + pad * gap for r in rows]
     if 32 not in grids:
-        grids[32] = ["." * (space + gap)]
+        grids[32] = [pad * (space + gap)]
 
     subpx_height = max((len(g) for g in grids.values()), default=ch)
     subpx_height += -subpx_height % ch
@@ -92,8 +100,8 @@ def main(argv):
     def encode(grid):
         width = max(len(r) for r in grid)
         width += -width % cw
-        rows = [r.ljust(width, ".") for r in grid]
-        rows += ["." * width] * (subpx_height - len(rows))
+        rows = [r.ljust(width, pad) for r in grid]
+        rows += [pad * width] * (subpx_height - len(rows))
         return render(rows, width, encoding).split("\n")
 
     height = subpx_height // ch
@@ -120,12 +128,14 @@ def main(argv):
         comments.append(f"shade: {shade}")
     if linegap:
         comments.append(f"linegap: {linegap}")
-    comments.append("WTFPL")
+    # A font drawn from someone else's says so in its own words.
+    credits = font_dir / "CREDITS"
+    comments.extend(credits.read_text().splitlines() if credits.exists() else ["WTFPL"])
     # required glyph order per the FIGfont spec: 32-126, then the seven
     # Deutsch characters untagged (toilet enforces this, figlet forgives),
     # then anything else as codetagged sections
     deutsch = [196, 214, 220, 228, 246, 252, 223]
-    lines.append(f"tlf2a{HARDBLANK} {height} {height} {max_len} -1 {len(comments)}")
+    lines.append(f"tlf2a{hardblank(body.values())} {height} {height} {max_len} -1 {len(comments)}")
     lines.extend(comments)
 
     def emit(cp):
